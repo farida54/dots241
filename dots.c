@@ -1,9 +1,12 @@
 #include "dots.h"
 #include <stdlib.h>
 
-/* h[r][c] = 1 -> line between dot (r,c) and dot (r,c+1) */
-/* v[r][c] = 1 -> line between dot (r,c) and dot (r+1,c) */
-/* box[r][c]   -> ' ' if free, 'A' or 'B' if claimed       */
+/* h[r][c] = 1 IS line between dot (r,c) and dot (r,c+1) */
+/* v[r][c] = 1 IS line between dot (r,c) and dot (r+1,c) */
+/* box[r][c]    ' ' if free, 'A' or 'B' if claimed       */
+
+
+
 void print_board(int h[DOT_ROWS][DOT_COLS - 1], int v[DOT_ROWS - 1][DOT_COLS],
                  char box[BOX_ROWS][BOX_COLS]) {
     printf("  ");
@@ -23,7 +26,10 @@ void print_board(int h[DOT_ROWS][DOT_COLS - 1], int v[DOT_ROWS - 1][DOT_COLS],
         }
         printf("\n");
 
-        /* vertical lines and box owners between this row and the next */
+        // vertical lines and box owners between this row and the next 
+
+
+
         printf("  ");
         if (r < DOT_ROWS - 1) {
             for (int c = 0; c < DOT_COLS; c++) {
@@ -46,9 +52,9 @@ int draw_line(int h[DOT_ROWS][DOT_COLS - 1], int v[DOT_ROWS - 1][DOT_COLS],
         return 0;
     }
 
-    if (r1 == r2 && abs(c1 - c2) == 1) {          /* horizontal */
+    if (r1 == r2 && abs(c1 - c2) == 1) {          // horizontal 
         int c = (c1 < c2) ? c1 : c2;
-        if (h[r1][c]) return 0;                    /* already drawn */
+        if (h[r1][c]) return 0;                    // already drawn
         h[r1][c] = 1;
         return 1;
     }
@@ -71,6 +77,9 @@ int box_complete(int h[DOT_ROWS][DOT_COLS - 1], int v[DOT_ROWS - 1][DOT_COLS],
 
 /* If box (r,c) is on the board, still free and now complete, give it to
    player. Returns 1 if the box was claimed, 0 otherwise. */
+
+
+
 int try_claim(int h[DOT_ROWS][DOT_COLS - 1], int v[DOT_ROWS - 1][DOT_COLS],
               char box[BOX_ROWS][BOX_COLS], int r, int c, char player) {
     if (r < 0 || r >= BOX_ROWS || c < 0 || c >= BOX_COLS) return 0;
@@ -82,6 +91,9 @@ int try_claim(int h[DOT_ROWS][DOT_COLS - 1], int v[DOT_ROWS - 1][DOT_COLS],
 
 /* Checks the 1 or 2 boxes touching the line that was just drawn.
    Returns how many boxes were completed (0, 1 or 2). */
+
+
+
 int check_boxes(int h[DOT_ROWS][DOT_COLS - 1], int v[DOT_ROWS - 1][DOT_COLS],
                 char box[BOX_ROWS][BOX_COLS],
                 int r1, int c1, int r2, int c2, char player) {
@@ -99,6 +111,10 @@ int check_boxes(int h[DOT_ROWS][DOT_COLS - 1], int v[DOT_ROWS - 1][DOT_COLS],
     return count;
 }
 
+
+
+
+
 int main(void) {
     int r1, c1, r2, c2;
     int h[DOT_ROWS][DOT_COLS - 1] = {0};
@@ -114,19 +130,27 @@ int main(void) {
         }
     }
 
+
+
     while (lines_drawn < TOTAL_LINES) {
         print_board(h, v, box);
 
         printf("Player %c's turn. Enter the row and column of the first dot "
                "(e.g., A0 -> 0 0) and second dot: ", player);
         if (scanf("%d %d %d %d", &r1, &c1, &r2, &c2) != 4) {
-            printf("Invalid input.\n");
-            return 1;
+            int ch;
+            while ((ch = getchar()) != '\n' && ch != EOF) { }   /* throw away the bad line */
+            if (ch == EOF) {
+                printf("Input ended.\n");
+                return 1;
+            }
+            printf("Invalid input, enter 4 numbers.\n");
+            continue;                              /* same player again */
         }
 
         if (!draw_line(h, v, r1, c1, r2, c2)) {
             printf("Invalid move, try again.\n");
-            continue;                              /* same player again */
+            continue;                            
         }
         lines_drawn++;
 
@@ -143,6 +167,9 @@ int main(void) {
 
     print_board(h, v, box);
     printf("Final score  A: %d  B: %d\n", scoreA, scoreB);
+    if (scoreA > scoreB)      printf("Player A wins!\n");
+    else if (scoreB > scoreA) printf("Player B wins!\n");
+    else                      printf("It's a tie!\n");
 
     return 0;
 }

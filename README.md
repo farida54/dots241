@@ -85,3 +85,21 @@ starts the game on tty1 instead, and `respawn` restarts it if it ever exits.
 
 - A normal login is still available on the second console: **Alt+F2**.
 - To undo: `cp /etc/inittab.orig /etc/inittab && reboot`.
+
+## Ubuntu VM: boot straight into the game
+
+Same idea as Alpine, using systemd. Run from the repository folder:
+
+```sh
+make
+sudo sh ubuntu/setup.sh
+sudo reboot
+```
+
+`setup.sh` installs the game, adds a drop-in file
+`/etc/systemd/system/getty@tty1.service.d/dots.conf` so the tty1 service runs
+`dots-launch` instead of the login prompt, and sets the default boot target to
+`multi-user.target` (text console, no desktop).
+
+- Normal login: **Ctrl+Alt+F2**. Start the desktop once: `sudo systemctl start lightdm`.
+- Undo everything: `sudo sh ubuntu/undo.sh && sudo reboot`.

@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 #include "board.h"
 
 int main(void) {
     int r1, c1, r2, c2;
+    char line[128];
+    char extra;
     int h[DOT_ROWS][DOT_COLS - 1] = {0};
     int v[DOT_ROWS - 1][DOT_COLS] = {0};
     char box[BOX_ROWS][BOX_COLS];
@@ -23,14 +26,17 @@ int main(void) {
 
         printf("Player %c's turn. Enter the row and column of the first dot "
                "(e.g., A0 -> 0 0) and second dot: ", player);
-        if (scanf("%d %d %d %d", &r1, &c1, &r2, &c2) != 4) {
+        /* read one whole line so leftover text never leaks into the next turn */
+        if (fgets(line, sizeof line, stdin) == NULL) {
+            printf("\nInput ended.\n");
+            return 1;
+        }
+        if (strchr(line, '\n') == NULL) {          /* line too long: drop the rest */
             int ch;
-            while ((ch = getchar()) != '\n' && ch != EOF) { }   /* throw away the bad line */
-            if (ch == EOF) {
-                printf("Input ended.\n");
-                return 1;
-            }
-            printf("Invalid input, enter 4 numbers.\n");
+            while ((ch = getchar()) != '\n' && ch != EOF) { }
+        }
+        if (sscanf(line, "%d %d %d %d %c", &r1, &c1, &r2, &c2, &extra) != 4) {
+            printf("Invalid input, enter exactly 4 numbers (e.g. 0 0 0 1).\n");
             continue;                              /* same player again */
         }
 

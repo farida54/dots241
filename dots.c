@@ -163,6 +163,12 @@ int main(void) {
         } else {
             player = (player == 'A') ? 'B' : 'A';  /* switch only if no box */
         }
+
+        /* score banner after every valid move, like the sample output */
+        printf("**********************************************************************\n");
+        printf("Player A score: %d\n", scoreA);
+        printf("Player B score: %d\n", scoreB);
+        printf("**********************************************************************\n");
     }
 
     print_board(h, v, box);
@@ -171,5 +177,6 @@ int main(void) {
     else if (scoreB > scoreA) printf("Player B wins!\n");
     else                      printf("It's a tie!\n");
 
+    
     return 0;
 }

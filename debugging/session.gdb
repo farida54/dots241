@@ -31,7 +31,7 @@ commands
 end
 
 # 3) Game over: check final state before the winner is printed.
-break main.c:66
+break main.c:96
 commands
   silent
   echo \n=== [3] Game over: final state ===\n

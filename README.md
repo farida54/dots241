@@ -24,10 +24,13 @@ make
 ./dots
 ```
 
-Enter a move as four numbers: row and column of the first dot, then of the second dot.
-Example: `0 0 0 1` draws the top-left horizontal line. Invalid input, lines that are not
+Enter a move as four digits: row and column of the first dot, then of the second dot.
+Example: `0 0 0 1` draws the top-left horizontal line. Spaces are ignored, so `0001`,
+`00 01` and `0 0 01` mean the same move. Invalid input, lines that are not
 between neighbouring dots, and lines that are already drawn are rejected, and the same
 player tries again.
+
+After a game ends, answer `y` to play again. Press **Ctrl+C** at any time to quit.
 
 ## Debugging (Valgrind and GDB)
 
@@ -48,7 +51,7 @@ Both report `0 errors` and `All heap blocks were freed -- no leaks are possible`
 1. a *conditional breakpoint* on `draw_line` that stops only on the diagonal move
    `0 0 1 1`, then `finish` to show it returns `0` (rejected);
 2. a breakpoint where a box is claimed in `try_claim`: `info args`, `backtrace`
-   (main → check_boxes → try_claim) and printing the box's 4 sides;
+   (main → play_game → check_boxes → try_claim) and printing the box's 4 sides;
 3. a breakpoint at the end of the game, printing `lines_drawn` (49), both scores
    (they add up to 20) and the full `box` array.
 
@@ -58,6 +61,10 @@ To debug by hand: `gdb ./dots`, then for example `break check_boxes`, `run`,
 Bug found while debugging: input was read with `scanf`, so extra text after the four
 numbers (`0 0 0 1 extra`) stayed in the input and showed up as an error on the next
 turn. Fixed by reading one full line with `fgets` and parsing it with `sscanf`.
+
+Later, input is read one character at a time and only digits are kept. This also removes
+two rarer bugs: `sscanf("%d")` on a huge number like `99999999999` is undefined behaviour
+in C, and a line longer than the 128-byte buffer used to be cut and parsed.
 
 ## Alpine Linux VM: boot straight into the game
 

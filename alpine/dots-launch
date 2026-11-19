@@ -1,0 +1,18 @@
+#!/bin/sh
+# Started by busybox init on tty1 instead of the login prompt (see /etc/inittab).
+# Runs the game, then offers a new game. If anything goes wrong, init restarts it.
+
+export TERM=linux
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+while true; do
+    clear
+    echo "=============================="
+    echo "        DOTS AND BOXES"
+    echo "=============================="
+    echo
+    /usr/local/bin/dots
+    echo
+    printf "Press Enter to play again... "
+    read -r _ || sleep 1      # avoid a busy loop if the terminal goes away
+done
